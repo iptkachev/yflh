@@ -21,7 +21,7 @@
     "@vkontakte/icons": "^1.20.2",
     "@vkontakte/vk-bridge": "^2.1.8",
     "@vkontakte/vk-miniapps-deploy": "0.0.17",
-    "@vkontakte/vkui": "^3.6.1",
+    "@vkontakte/vkui": "^3.7.0",
     "babel-eslint": "^10.1.0",
     "chalk": "^2.4.2",
     "core-js": "^3.6.5",
@@ -30,7 +30,8 @@
     "eruda-dom": "^2.0.0",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "vksdk": "^5.3.2"
   },
   "browserslist": {
     "production": [

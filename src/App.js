@@ -1,44 +1,83 @@
-import React, { useState, useEffect } from 'react';
-import bridge from '@vkontakte/vk-bridge';
-import View from '@vkontakte/vkui/dist/components/View/View';
-import ScreenSpinner from '@vkontakte/vkui/dist/components/ScreenSpinner/ScreenSpinner';
+import React from 'react';
+import { View, Panel, PanelHeader, Header, Group, Cell, List, PanelHeaderButton, platform, ANDROID } from '@vkontakte/vkui';
 import '@vkontakte/vkui/dist/vkui.css';
+import Icon28ChevronBack from '@vkontakte/icons/dist/28/chevron_back';
+import Icon24Back from '@vkontakte/icons/dist/24/back';
 
-import Home from './panels/Home';
-import Persik from './panels/Persik';
+const osName = platform();
 
-const App = () => {
-	const [activePanel, setActivePanel] = useState('home');
-	const [fetchedUser, setUser] = useState(null);
-	const [popout, setPopout] = useState(<ScreenSpinner size='large' />);
+class App extends React.Component {
 
-	useEffect(() => {
-		bridge.subscribe(({ detail: { type, data }}) => {
-			if (type === 'VKWebAppUpdateConfig') {
-				const schemeAttribute = document.createAttribute('scheme');
-				schemeAttribute.value = data.scheme ? data.scheme : 'client_light';
-				document.body.attributes.setNamedItem(schemeAttribute);
-			}
-		});
-		async function fetchData() {
-			const user = await bridge.send('VKWebAppGetUserInfo');
-			setUser(user);
-			setPopout(null);
+	constructor(props) {
+		super(props);
+		this.state = {
+			activePanel: 'artistItems',
+			activeArtist: null,
+			activeArtistCitites: null,
+			arrayArtists: [
+				{ id: 1, name: 'Моргенштерн', cities: [<p>"Москва" - 5000000</p>, <p>"Санкт-Петербург" - 1000000</p>, <p>"Казань" - 1000000</p>] },
+				{ id: 2, name: 'Дима Билан', cities: [<p>"Москва" - 7000000</p>, <p>"Новосибирск" - 500500</p>, <p>"Казань" - 500000</p>] },
+				{ id: 3, name: 'Little Big', cities: [<p>"Москва" - 6000000</p>, <p>"Казань" - 1000000</p>, <p>"Челябинск" - 300000</p>] },
+				{ id: 4, name: 'Linkin Park', cities: [<p>"Москва" - 2000000</p>, <p>"Казань" - 1000000</p>, <p>"Санкт-Петербург" - 500000</p>] },
+			],
+		};
+	}
+
+	render() {
+		const artistItems = [];
+		for (const artist of this.state.arrayArtists.values()) {
+			artistItems.push(
+				<Cell expandable onClick={() => this.setState({ activePanel: 'artistView', activeArtist: artist.name, activeCities: artist.cities})}>{artist.name}</Cell>,
+			);
+
 		}
-		fetchData();
-	}, []);
+		return (
+			<View activePanel={this.state.activePanel}>
+				<Panel id="artistItems">
+					<PanelHeader>
+						Музыканты
+					</PanelHeader>
+					<Group>
+						<List>
+							{artistItems}
+						</List>
+					</Group>
+				</Panel>
 
-	const go = e => {
-		setActivePanel(e.currentTarget.dataset.to);
-	};
 
-	return (
-		<View activePanel={activePanel} popout={popout}>
-			<Home id='home' fetchedUser={fetchedUser} go={go} />
-			<Persik id='persik' go={go} />
-		</View>
-	);
+				<Panel id="artistView">
+					<PanelHeader
+						left={
+							<PanelHeaderButton onClick={() => this.setState({ activePanel: 'artistItems' })}>
+								{osName === ANDROID ? <Icon24Back/> : <Icon28ChevronBack/>}
+							</PanelHeaderButton>
+						}
+					>
+						{this.state.activeArtist}
+					</PanelHeader>
+					<div
+						style={{
+							padding: '100px 0',
+							height: '100%',
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+						}}
+					>
+						<div
+							style={{
+								flex: '0 0 auto',
+								color: 'gray',
+								textAlign: 'center',
+							}}
+						>
+							{this.state.activeCities}
+						</div>
+					</div>
+				</Panel>
+			</View>
+		);
+	}
 }
 
 export default App;
-
